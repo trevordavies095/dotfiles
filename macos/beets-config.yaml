@@ -1,0 +1,65 @@
+directory: /Volumes/Backup/Media/Music
+library: /Volumes/Backup/Media/Music/beets/musiclibrary.db
+threaded: yes
+per_disc_numbering: yes
+asciify_paths: yes
+
+plugins: missing lastgenre mbsync describe badfiles yearfixer lastgenre inline copyartifacts fetchart
+fetchart:
+  minwidth: 1000
+  maxwidth: 1000
+  cover_names: front back
+  sources: itunes *
+  cautious: yes
+
+
+badfiles:
+  check_on_import: yes
+  commands:
+      ogg: myoggchecker --opt1 --opt2
+      flac: flac --test --warnings-as-errors --silent
+      mp3: mp3val
+
+copyartifacts:
+  extensions: .cue .log .jpg .CUE .LOG .JPG
+
+match:
+  strong_rec_thresh: 0.05
+  max_rec:
+    source: strong
+    artist: strong
+    album: strong
+    media: strong
+    mediums: strong
+    year: strong
+    country: strong
+    label: strong
+    catalognum: strong
+    albumdisambig: strong
+    album_id: strong
+    tracks: strong
+    missing_tracks: medium
+    unmatched_tracks: medium
+    track_title: strong
+    track_artist: strong
+    track_index: strong
+    track_length: strong
+    track_id: strong
+  preferred:
+    media: ['CD|File', 'CD']
+    countries: ['DE', 'XW', 'US', 'GB|UK']
+
+
+item_fields:
+  multidisc: 1 if disctotal > 1 else 0
+
+# Display the bitdepth and sample rate if the file is flac
+# Directory and naming scheme.
+paths:
+  default: %if{$albumartist_sort, %asciify{$albumartist_sort}, %asciify{$albumartist}}/%if{$year,[$year] %asciify{$album},%asciify{$album}}%if{$label, [%asciify{$label}]} ($format%if{$bitdepth, $bitdepth-$samplerate})/%if{$multidisc,$disc-}$track %asciify{$title}
+  singleton: %if{$albumartist_sort, %asciify{$albumartist_sort}, %asciify{$albumartist}}/Non-Album/%asciify{$title}
+  albumtype:soundtrack: Soundtracks/%if{$year,[$year] %asciify{$album},%asciify{$album}}%if{$label, [%asciify{$label}]} ($format%if{$bitdepth, $bitdepth-$samplerate})/%if{$multidisc,$disc-}$track %asciify{$title}
+  comp: Compilations/%if{$year,[$year] %asciify{$album},%asciify{$album}}%if{$label, [%asciify{$label}]} ($format%if{$bitdepth, $bitdepth-$samplerate})/%if{$multidisc,$disc-}$track - %asciify{$artist} - %asciify{$title}
+
+import:
+  bell: yes
